@@ -8774,11 +8774,11 @@ static int qseecom_remove(struct platform_device *pdev)
 		&qseecom.registered_kclient_list_head, list) {
 
 		/* Break the loop if client handle is NULL */
-		if (!kclient->handle)
-			goto exit_free_kclient;
-
-		if (list_empty(&kclient->list))
-			goto exit_free_kc_handle;
+		if (!kclient->handle) {
+			list_del(&kclient->list);
+			kzfree(kclient);
+			break;
+		}
 
 		list_del(&kclient->list);
 		mutex_lock(&app_access_lock);
